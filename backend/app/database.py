@@ -1,0 +1,20 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from typing import Generator
+
+from app.config import settings
+
+engine = create_engine(settings.DATABASE_URL, echo=False)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+
+def get_db() -> Generator:
+    """Dependency that yields a database session and ensures cleanup."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

@@ -1,0 +1,35 @@
+{
+  "contract_type": "employment",
+  "clauses": [
+    {
+      "clause_type": "termination",
+      "standard_text": "Either party may terminate this Agreement: (a) by the Employee upon thirty (30) days written notice; (b) by the Employer upon sixty (60) days written notice or payment in lieu of notice; (c) by the Employer immediately for Cause, which includes material breach, gross misconduct, fraud, or conviction of a felony; or (d) by mutual written agreement. Upon termination, the Employee shall return all company property, Confidential Information, and materials.",
+      "description": "Standard employment termination with different notice periods for employer/employee"
+    },
+    {
+      "clause_type": "confidentiality",
+      "standard_text": "During the term of employment and for two (2) years thereafter, Employee agrees not to disclose, use, or make available to any third party any Confidential Information of the Employer, except as required in the performance of Employee's duties. Confidential Information includes trade secrets, business plans, customer lists, financial information, and proprietary technology. This obligation does not apply to information that becomes publicly available through no fault of the Employee.",
+      "description": "Standard employment confidentiality with 2-year survival"
+    },
+    {
+      "clause_type": "ip_ownership",
+      "standard_text": "All inventions, works of authorship, developments, and improvements conceived or made by Employee during the term of employment and related to the Employer's business shall be the sole and exclusive property of the Employer ('Work Product'). Employee hereby assigns all rights in such Work Product to the Employer. This assignment does not apply to inventions developed entirely on Employee's own time without use of Employer's resources and unrelated to Employer's business.",
+      "description": "Standard employment IP assignment with personal project carve-out"
+    },
+    {
+      "clause_type": "payment_terms",
+      "standard_text": "Employee shall receive a base salary of [Amount] per annum, payable in equal monthly installments. In addition, Employee shall be eligible for an annual performance bonus of up to [Percentage]% of base salary, subject to achievement of mutually agreed performance targets. Salary shall be reviewed annually. Employee shall be entitled to standard benefits including health insurance, paid time off, and retirement contributions as per the Employer's policies.",
+      "description": "Standard employment compensation with salary, bonus, and benefits"
+    },
+    {
+      "clause_type": "governing_law",
+      "standard_text": "This Agreement shall be governed by and construed in accordance with the employment laws of [Jurisdiction]. Any disputes arising under this Agreement shall first be submitted to mediation, and if unresolved, to the courts of competent jurisdiction in [Venue].",
+      "description": "Standard employment governing law with mediation first"
+    },
+    {
+      "clause_type": "indemnity",
+      "standard_text": "Employee agrees to indemnify and hold harmless the Employer from any losses, damages, or expenses arising from Employee's willful misconduct, gross negligence, or breach of this Agreement. The Employer agrees to indemnify Employee for claims arising from Employee's good faith performance of duties, and to maintain directors and officers liability insurance covering Employee's actions within the scope of employment.",
+      "description": "Standard mutual employment indemnity balanced between employer and employee"
+    }
+  ]
+}

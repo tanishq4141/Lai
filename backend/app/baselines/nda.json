@@ -1,0 +1,35 @@
+{
+  "contract_type": "nda",
+  "clauses": [
+    {
+      "clause_type": "confidentiality",
+      "standard_text": "Each party agrees to hold in confidence and not disclose to any third party any Confidential Information of the other party, except to its employees, contractors, and advisors who have a need to know and are bound by obligations of confidentiality at least as protective as those contained herein. Confidential Information excludes information that: (a) is or becomes publicly available through no fault of the receiving party; (b) was known to the receiving party prior to disclosure; (c) is independently developed without use of the Confidential Information; or (d) is rightfully received from a third party without restriction. This obligation shall survive for a period of three (3) years following disclosure.",
+      "description": "Standard mutual NDA confidentiality clause with standard carve-outs and 3-year duration"
+    },
+    {
+      "clause_type": "termination",
+      "standard_text": "Either party may terminate this Agreement at any time upon thirty (30) days written notice to the other party. Upon termination, each party shall promptly return or destroy all Confidential Information of the other party and certify in writing that it has done so. The obligations of confidentiality shall survive termination of this Agreement.",
+      "description": "Standard NDA termination with 30-day notice and survival clause"
+    },
+    {
+      "clause_type": "governing_law",
+      "standard_text": "This Agreement shall be governed by and construed in accordance with the laws of [Jurisdiction], without regard to its conflict of laws principles. Any dispute arising out of or relating to this Agreement shall be resolved through good faith negotiation, and if unsuccessful, through binding arbitration in accordance with the rules of [Arbitration Body].",
+      "description": "Standard governing law with arbitration fallback"
+    },
+    {
+      "clause_type": "indemnity",
+      "standard_text": "Each party agrees to indemnify and hold harmless the other party from and against any claims, damages, losses, and expenses (including reasonable attorneys' fees) arising from or relating to any breach of this Agreement by the indemnifying party, subject to prompt notification and reasonable cooperation in the defense of such claims.",
+      "description": "Standard mutual indemnity limited to breach of the NDA itself"
+    },
+    {
+      "clause_type": "limitation_of_liability",
+      "standard_text": "In no event shall either party be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to this Agreement, regardless of the theory of liability. Each party's total aggregate liability under this Agreement shall not exceed the greater of (a) the fees paid or payable under this Agreement in the twelve (12) months preceding the claim, or (b) one hundred thousand dollars ($100,000).",
+      "description": "Standard liability cap with consequential damages exclusion"
+    },
+    {
+      "clause_type": "ip_ownership",
+      "standard_text": "Nothing in this Agreement shall be construed as granting any rights, by license or otherwise, to any Confidential Information of the disclosing party, except as expressly set forth herein. All intellectual property rights in the Confidential Information shall remain with the disclosing party.",
+      "description": "Standard IP retention clause for NDAs"
+    }
+  ]
+}

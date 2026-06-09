@@ -1,0 +1,40 @@
+{
+  "contract_type": "saas",
+  "clauses": [
+    {
+      "clause_type": "payment_terms",
+      "standard_text": "Customer shall pay all fees as set forth in the applicable Order Form. Unless otherwise specified, fees are due within thirty (30) days of the invoice date. Late payments shall accrue interest at the lesser of 1.5% per month or the maximum rate permitted by law. Customer is responsible for all taxes excluding taxes based on Provider's income.",
+      "description": "Standard SaaS payment terms with net-30 and reasonable late fee"
+    },
+    {
+      "clause_type": "termination",
+      "standard_text": "Either party may terminate this Agreement: (a) for convenience upon sixty (60) days written notice; (b) immediately upon written notice if the other party materially breaches this Agreement and fails to cure such breach within thirty (30) days after receipt of written notice; or (c) immediately if the other party becomes insolvent, files for bankruptcy, or ceases operations. Upon termination, Provider shall make Customer's data available for export for thirty (30) days.",
+      "description": "Standard SaaS termination with cure period and data portability"
+    },
+    {
+      "clause_type": "limitation_of_liability",
+      "standard_text": "Neither party shall be liable for any indirect, incidental, special, consequential, or exemplary damages, including but not limited to damages for loss of profits, data, or business opportunities, regardless of whether such party was advised of the possibility of such damages. Each party's total cumulative liability under this Agreement shall not exceed the total fees paid by Customer in the twelve (12) months immediately preceding the event giving rise to the claim.",
+      "description": "Standard SaaS liability cap at 12 months of fees"
+    },
+    {
+      "clause_type": "confidentiality",
+      "standard_text": "Each party agrees to protect the other party's Confidential Information using the same degree of care it uses to protect its own confidential information, but no less than reasonable care. Confidential Information may only be disclosed to employees and contractors who need to know and are bound by confidentiality obligations. This obligation survives termination for a period of three (3) years, except for trade secrets which shall be protected indefinitely.",
+      "description": "Standard SaaS confidentiality with trade secret carve-out"
+    },
+    {
+      "clause_type": "ip_ownership",
+      "standard_text": "Provider retains all right, title, and interest in and to the Service, including all related intellectual property rights. Customer retains all rights to Customer Data. Provider is granted a limited, non-exclusive license to use Customer Data solely to provide the Service. Any feedback or suggestions provided by Customer regarding the Service may be used by Provider without restriction or obligation.",
+      "description": "Standard SaaS IP ownership with feedback license"
+    },
+    {
+      "clause_type": "indemnity",
+      "standard_text": "Provider shall defend, indemnify, and hold harmless Customer from and against any third-party claims alleging that the Service infringes any intellectual property right, provided that Customer: (a) promptly notifies Provider of the claim; (b) grants Provider sole control of the defense and settlement; and (c) provides reasonable assistance at Provider's expense. If the Service is found to infringe, Provider may at its option: (i) obtain a license, (ii) modify the Service to be non-infringing, or (iii) terminate the affected subscription and refund prepaid fees.",
+      "description": "Standard SaaS IP indemnity from provider to customer"
+    },
+    {
+      "clause_type": "governing_law",
+      "standard_text": "This Agreement shall be governed by the laws of [Jurisdiction] without regard to conflict of laws principles. Each party consents to the exclusive jurisdiction of the courts located in [Venue] for any dispute arising under this Agreement.",
+      "description": "Standard governing law with exclusive jurisdiction"
+    }
+  ]
+}
