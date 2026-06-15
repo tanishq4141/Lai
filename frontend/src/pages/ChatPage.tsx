@@ -72,9 +72,9 @@ export function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-full animate-fade-in">
+    <div className="absolute inset-0 flex flex-col bg-[var(--color-background)] animate-fade-in z-10">
       {/* Header */}
-      <div className="px-8 py-4 border-b border-[var(--color-border)] flex items-center gap-4 shrink-0">
+      <div className="px-4 md:px-8 py-4 border-b border-[var(--color-border)] flex items-center gap-4 shrink-0 bg-[var(--color-background)] z-20">
         <Link
           to={`/contracts/${id}`}
           className="p-2 rounded-lg hover:bg-[var(--color-secondary)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
@@ -95,7 +95,7 @@ export function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary)]/10 flex items-center justify-center mb-4">
@@ -113,7 +113,7 @@ export function ChatPage() {
                 <button
                   key={q}
                   onClick={() => handleSend(q)}
-                  className="text-left px-3 py-2 rounded-lg text-xs text-[var(--color-muted-foreground)] bg-[var(--color-secondary)] hover:bg-[var(--color-accent)] hover:text-[var(--color-foreground)] transition-colors"
+                  className="text-left px-3 py-2 rounded-lg text-xs text-[var(--color-muted-foreground)] bg-[var(--color-secondary)] hover:bg-[var(--color-accent)] hover:text-[var(--color-foreground)] transition-all duration-200 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:shadow-md"
                 >
                   {q}
                 </button>
@@ -152,7 +152,7 @@ export function ChatPage() {
                   : 'glass-card',
               )}
             >
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                 {msg.content}
               </p>
               {msg.citations && msg.citations.length > 0 && (
@@ -192,7 +192,7 @@ export function ChatPage() {
       </div>
 
       {/* Input */}
-      <div className="px-8 py-4 border-t border-[var(--color-border)] shrink-0">
+      <div className="px-4 md:px-8 py-4 border-t border-[var(--color-border)] shrink-0 bg-[var(--color-background)] pb-safe">
         <form onSubmit={handleSubmit} className="flex gap-3 max-w-3xl mx-auto">
           <input
             value={input}
@@ -205,9 +205,9 @@ export function ChatPage() {
             type="submit"
             disabled={!input.trim() || isLoading}
             className={cn(
-              'px-4 rounded-xl transition-all flex items-center justify-center',
+              'px-4 rounded-xl transition-all flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 duration-200',
               input.trim() && !isLoading
-                ? 'bg-[var(--color-primary)] text-white hover:opacity-90'
+                ? 'bg-[var(--color-primary)] text-white hover:opacity-90 hover:shadow-lg'
                 : 'bg-[var(--color-secondary)] text-[var(--color-muted-foreground)] cursor-not-allowed',
             )}
           >

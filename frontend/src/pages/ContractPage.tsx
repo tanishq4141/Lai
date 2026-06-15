@@ -81,19 +81,33 @@ export function ContractPage() {
   const isProcessing = contract ? !['complete', 'error'].includes(contract.status) : false;
 
   useEffect(() => {
+    const stageDurations = [2000, 5000, 8000, 8000, 5000];
+    let timeoutId: ReturnType<typeof setTimeout>;
+
     if (isProcessing) {
-      const timer = setInterval(() => {
-        setProgressStage((prev) => (prev < stages.length - 1 ? prev + 1 : prev));
-      }, 2500);
-      return () => clearInterval(timer);
+      const scheduleNext = (current: number) => {
+        if (current < stageDurations.length) {
+          timeoutId = setTimeout(() => {
+            setProgressStage(current + 1);
+            scheduleNext(current + 1);
+          }, stageDurations[current]);
+        }
+      };
+
+      setProgressStage(0);
+      scheduleNext(0);
     } else {
       setProgressStage(0);
     }
-  }, [isProcessing, stages.length]);
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isProcessing]);
 
   if (isLoading) {
     return (
-      <div className="p-8 animate-fade-in">
+      <div className="p-4 md:p-8 animate-fade-in">
         <div className="flex items-center gap-4 mb-8">
           <Skeleton className="h-9 w-9 rounded-lg" />
           <div className="flex-1">
@@ -127,7 +141,7 @@ export function ContractPage() {
         <p className="text-sm mb-6">There was a problem communicating with the server.</p>
         <button
           onClick={() => refetch()}
-          className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:opacity-90 transition-opacity"
+          className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:opacity-90 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95"
         >
           Retry
         </button>
@@ -137,7 +151,7 @@ export function ContractPage() {
 
   if (!contract) {
     return (
-      <div className="p-8 text-center text-[var(--color-muted-foreground)]">
+      <div className="p-4 md:p-8 text-center text-[var(--color-muted-foreground)]">
         Contract not found.
       </div>
     );
@@ -162,30 +176,32 @@ export function ContractPage() {
     : [];
 
   return (
-    <div className="p-8 animate-fade-in">
+    <div className="p-4 md:p-8 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Link
-          to="/"
-          className="p-2 rounded-lg hover:bg-[var(--color-secondary)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <FileText className="h-6 w-6 text-[var(--color-primary)]" />
-            <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
-              {contract.filename}
-            </h1>
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+        <div className="flex items-start gap-4 flex-1 min-w-0">
+          <Link
+            to="/"
+            className="p-2 rounded-lg hover:bg-[var(--color-secondary)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors shrink-0"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3">
+              <FileText className="h-6 w-6 text-[var(--color-primary)] shrink-0" />
+              <h1 className="text-xl md:text-2xl font-bold text-[var(--color-foreground)] truncate" title={contract.filename}>
+                {contract.filename}
+              </h1>
+            </div>
+            <p className="text-sm text-[var(--color-muted-foreground)] mt-1 truncate">
+              Uploaded {formatDate(contract.created_at)}
+            </p>
           </div>
-          <p className="text-sm text-[var(--color-muted-foreground)] mt-1">
-            Uploaded {formatDate(contract.created_at)}
-          </p>
         </div>
         {contract.status === 'complete' && (
           <Link
             to={`/contracts/${id}/chat`}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-secondary)] text-[var(--color-foreground)] font-medium text-sm hover:bg-[var(--color-accent)] transition-colors"
+            className="flex items-center justify-center md:justify-start gap-2 px-4 py-2 rounded-lg bg-[var(--color-secondary)] text-[var(--color-foreground)] font-medium text-sm hover:bg-[var(--color-accent)] transition-colors w-full md:w-auto shrink-0"
           >
             <MessageSquare className="h-4 w-4" />
             Ask Questions
@@ -195,24 +211,24 @@ export function ContractPage() {
 
       {/* Processing State */}
       {isProcessing && (
-        <>
-          <div className="glass-card rounded-xl p-10 max-w-2xl mx-auto mb-12 shadow-lg border-[var(--color-border)]">
-            <div className="flex flex-col items-center mb-8">
+        <div className="min-h-[50vh] flex flex-col justify-center">
+          <div className="glass-card rounded-xl p-6 md:p-10 max-w-2xl mx-auto mb-12 shadow-lg border-[var(--color-border)]">
+            <div className="flex flex-col items-center mb-6 md:mb-8">
               <div className="relative">
-                <Loader2 className="h-16 w-16 animate-spin text-[var(--color-primary)] mb-6" />
-                <div className="absolute inset-0 flex items-center justify-center mb-6">
-                  <FileText className="h-6 w-6 text-[var(--color-primary)] opacity-80" />
+                <Loader2 className="h-12 w-12 md:h-16 md:w-16 animate-spin text-[var(--color-primary)] mb-4 md:mb-6" />
+                <div className="absolute inset-0 flex items-center justify-center mb-4 md:mb-6">
+                  <FileText className="h-5 w-5 md:h-6 md:w-6 text-[var(--color-primary)] opacity-80" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-[var(--color-foreground)] mb-3 bg-gradient-to-r from-[var(--color-primary)] to-blue-500 bg-clip-text text-transparent">
+              <h2 className="text-xl md:text-2xl font-bold text-[var(--color-foreground)] mb-2 md:mb-3 bg-gradient-to-r from-[var(--color-primary)] to-blue-500 bg-clip-text text-transparent text-center">
                 Analyzing Contract
               </h2>
-              <p className="text-[var(--color-muted-foreground)] text-center max-w-md">
+              <p className="text-[var(--color-muted-foreground)] text-sm md:text-base text-center max-w-md">
                 Our AI is reviewing your document. This usually takes about 15-20 seconds.
               </p>
             </div>
             
-            <div className="space-y-1 px-4 md:px-12">
+            <div className="space-y-1 px-2 md:px-12">
               {stages.map((stage, index) => {
                 const isCompleted = index < progressStage;
                 const isCurrent = index === progressStage;
@@ -221,22 +237,22 @@ export function ContractPage() {
                   <div 
                     key={index} 
                     className={cn(
-                      "flex items-center gap-4 py-1.5 px-3 rounded-lg transition-all duration-500",
+                      "flex items-center gap-3 md:gap-4 py-1.5 px-2 md:px-3 rounded-lg transition-all duration-500",
                       isCurrent ? "bg-[var(--color-secondary)]/50 scale-105 shadow-sm" : "",
                       isCompleted ? "opacity-100" : isCurrent ? "opacity-100" : "opacity-40"
                     )}
                   >
-                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                    <div className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center">
                       {isCompleted ? (
-                        <CheckCircle2 className="h-6 w-6 text-green-500 animate-in zoom-in duration-300" />
+                        <CheckCircle2 className="h-4 w-4 md:h-6 md:w-6 text-green-500 animate-in zoom-in duration-300" />
                       ) : isCurrent ? (
-                        <Loader2 className="h-5 w-5 text-[var(--color-primary)] animate-spin" />
+                        <Loader2 className="h-3.5 w-3.5 md:h-5 md:w-5 text-[var(--color-primary)] animate-spin" />
                       ) : (
-                        <div className="w-2.5 h-2.5 rounded-full bg-[var(--color-muted-foreground)]/30" />
+                        <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-[var(--color-muted-foreground)]/30" />
                       )}
                     </div>
                     <span className={cn(
-                      "text-sm font-medium transition-colors duration-300",
+                      "text-xs md:text-sm font-medium transition-colors duration-300",
                       isCurrent ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
                     )}>
                       {stage}
@@ -246,62 +262,9 @@ export function ContractPage() {
               })}
             </div>
           </div>
+        </div>
 
-          {/* Skeleton Results while Analyzing */}
-          <div className="opacity-20 pointer-events-none transition-opacity duration-1000 blur-[1px]">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <div className="glass-card rounded-xl p-6 flex flex-col items-center justify-center space-y-4">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-32 w-32 rounded-full" />
-                <Skeleton className="h-6 w-24 rounded-full" />
-              </div>
-              <div className="glass-card rounded-xl p-6 flex flex-col items-center justify-center space-y-4">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-32 w-full max-w-[200px] rounded-full" />
-              </div>
-              <div className="glass-card rounded-xl p-6 flex flex-col space-y-4">
-                <Skeleton className="h-4 w-32 mb-4" />
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="flex justify-between items-center w-full">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-5 w-8 rounded-full" />
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="glass-card rounded-xl p-6 mb-8 space-y-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Skeleton className="h-5 w-5" />
-                <Skeleton className="h-6 w-48" />
-              </div>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-[90%]" />
-              <Skeleton className="h-4 w-[95%]" />
-            </div>
-
-            <div className="glass-card rounded-xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-[var(--color-border)]">
-                <Skeleton className="h-6 w-48" />
-              </div>
-              <div className="divide-y divide-[var(--color-border)]">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="p-6 flex items-center gap-4">
-                    <Skeleton className="h-10 w-1.5 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-5 w-64" />
-                      <Skeleton className="h-4 w-full max-w-md" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-6 w-16 rounded-full" />
-                      <Skeleton className="h-4 w-4" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
       )}
 
       {/* Error State */}
@@ -529,7 +492,7 @@ function ClauseCard({
     >
       <button
         onClick={onToggle}
-        className="w-full px-6 py-4 flex items-center gap-4 hover:bg-[var(--color-secondary)]/30 transition-colors text-left"
+        className="w-full px-6 py-4 flex items-center gap-4 hover:bg-[var(--color-secondary)]/30 transition-all duration-200 text-left cursor-pointer hover:pl-7 active:scale-[0.99]"
       >
         {/* Risk indicator */}
         <div
@@ -539,18 +502,18 @@ function ClauseCard({
 
         {/* Main info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-[var(--color-foreground)]">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+            <span className="text-sm font-medium text-[var(--color-foreground)] line-clamp-2 break-words [overflow-wrap:anywhere]" title={clause.title || getClauseTypeLabel(clause.clause_type)}>
               {clause.title || getClauseTypeLabel(clause.clause_type)}
             </span>
             {clause.section_number && (
-              <span className="text-xs text-[var(--color-muted-foreground)]">
+              <span className="text-xs text-[var(--color-muted-foreground)] shrink-0 mt-0.5 md:mt-0">
                 Section {clause.section_number}
               </span>
             )}
           </div>
           {clause.plain_english_summary && (
-            <p className="text-xs text-[var(--color-muted-foreground)] mt-1 truncate">
+            <p className="text-xs text-[var(--color-muted-foreground)] mt-1 line-clamp-1 md:truncate">
               {clause.plain_english_summary}
             </p>
           )}

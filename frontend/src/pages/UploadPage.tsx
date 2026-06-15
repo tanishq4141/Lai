@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Upload,
   FileText,
@@ -8,8 +8,10 @@ import {
   AlertCircle,
   Loader2,
   X,
+  Clock,
+  History,
 } from 'lucide-react';
-import { uploadContract, triggerAnalysis } from '../lib/api';
+import { uploadContract, triggerAnalysis, getContracts } from '../lib/api';
 import { cn } from '../lib/utils';
 import { toastSuccess, toastError, toastInfo } from '../components/ui/Toast';
 
@@ -18,6 +20,17 @@ export function UploadPage() {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const { data: contracts } = useQuery({
+    queryKey: ['contracts'],
+    queryFn: getContracts,
+  });
+
+  const recentUploads = contracts?.slice(0, 3) || [];
+
+
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -29,9 +42,12 @@ export function UploadPage() {
       return contract;
     },
     onSuccess: (contract) => {
-      navigate(`/contracts/${contract.id}`);
+      setTimeout(() => {
+        navigate(`/contracts/${contract.id}`);
+      }, 1200);
     },
     onError: (err: any) => {
+      setIsTransitioning(false);
       const msg = err.response?.data?.detail || 'Upload failed. Please try again.';
       toastError(msg);
       setError(msg);
@@ -96,14 +112,31 @@ export function UploadPage() {
 
   const handleUpload = () => {
     if (selectedFile) {
+      setIsTransitioning(true);
       uploadMutation.mutate(selectedFile);
     }
   };
 
-  const isUploading = uploadMutation.isPending;
+  const isUploading = uploadMutation.isPending || isTransitioning;
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (isUploading && !uploadMutation.isSuccess) {
+      setUploadProgress(0);
+      interval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 95) return prev;
+          return prev + 5;
+        });
+      }, 300);
+    } else if (uploadMutation.isSuccess) {
+      setUploadProgress(100);
+    }
+    return () => clearInterval(interval);
+  }, [isUploading, uploadMutation.isSuccess]);
 
   return (
-    <div className="p-8 max-w-2xl mx-auto animate-fade-in">
+    <div className="p-4 md:p-8 max-w-2xl mx-auto animate-fade-in">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[var(--color-foreground)]">
           Upload Contract
@@ -149,17 +182,31 @@ export function UploadPage() {
             </p>
           </>
         ) : (
-          <div className="flex items-center justify-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center">
-              <FileText className="h-6 w-6 text-[var(--color-primary)]" />
+          <div className="flex items-center justify-center gap-4 animate-fade-in transition-all duration-300">
+            <div className={cn(
+              "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300",
+              selectedFile.name.toLowerCase().endsWith('.pdf') ? "bg-red-500/10" : "bg-blue-500/10"
+            )}>
+              <FileText className={cn(
+                "h-6 w-6",
+                selectedFile.name.toLowerCase().endsWith('.pdf') ? "text-red-500" : "text-blue-500"
+              )} />
             </div>
-            <div className="text-left">
-              <p className="text-sm font-medium text-[var(--color-foreground)]">
+            <div className="text-left flex-1 min-w-0">
+              <p className="text-sm font-medium text-[var(--color-foreground)] truncate" title={selectedFile.name}>
                 {selectedFile.name}
               </p>
-              <p className="text-xs text-[var(--color-muted-foreground)]">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-              </p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className={cn(
+                  "text-[10px] font-bold px-1.5 py-0.5 rounded",
+                  selectedFile.name.toLowerCase().endsWith('.pdf') ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"
+                )}>
+                  {selectedFile.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOCX'}
+                </span>
+                <p className="text-xs text-[var(--color-muted-foreground)]">
+                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
             </div>
             <button
               onClick={(e) => {
@@ -167,7 +214,7 @@ export function UploadPage() {
                 setSelectedFile(null);
                 setError(null);
               }}
-              className="p-1.5 rounded-lg hover:bg-[var(--color-secondary)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+              className="p-1.5 rounded-lg hover:bg-[var(--color-secondary)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-all duration-200 cursor-pointer hover:scale-110 active:scale-90 ml-2"
             >
               <X className="h-4 w-4" />
             </button>
@@ -185,28 +232,46 @@ export function UploadPage() {
 
       {/* Upload Button */}
       {selectedFile && (
-        <button
-          onClick={handleUpload}
-          disabled={isUploading}
-          className={cn(
-            'mt-6 w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-sm transition-all',
-            isUploading
-              ? 'bg-[var(--color-primary)]/50 text-white/50 cursor-not-allowed'
-              : 'bg-[var(--color-primary)] text-white hover:opacity-90 shadow-lg shadow-[var(--color-primary)]/20',
+        <div className="mt-6 animate-fade-in">
+          <button
+            onClick={handleUpload}
+            disabled={isUploading}
+            className={cn(
+              'w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 relative overflow-hidden cursor-pointer active:scale-[0.98]',
+              isUploading
+                ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)] cursor-not-allowed'
+                : 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/90 hover:-translate-y-1 hover:shadow-xl shadow-[var(--color-primary)]/20',
+            )}
+          >
+            {isUploading && (
+              <div 
+                className="absolute left-0 top-0 bottom-0 bg-[var(--color-primary)]/20 transition-all duration-1000 ease-out" 
+                style={{ width: `${uploadProgress}%` }} 
+              />
+            )}
+            
+            <div className="relative flex items-center gap-2">
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Uploading and starting analysis... {uploadProgress}%
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Upload and Analyze
+                </>
+              )}
+            </div>
+          </button>
+          
+          {isUploading && (
+            <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[var(--color-muted-foreground)] animate-fade-in">
+              <Clock className="h-4 w-4" />
+              <span>Estimated analysis time: 15-30 seconds</span>
+            </div>
           )}
-        >
-          {isUploading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Uploading and starting analysis...
-            </>
-          ) : (
-            <>
-              <CheckCircle2 className="h-4 w-4" />
-              Upload and Analyze
-            </>
-          )}
-        </button>
+        </div>
       )}
 
       {/* What happens next */}
@@ -231,6 +296,68 @@ export function UploadPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Recent Uploads */}
+      <div className="mt-8 glass-card rounded-xl p-6 animate-fade-in">
+        <div className="flex items-center gap-2 mb-4">
+          <History className="h-4 w-4 text-[var(--color-primary)]" />
+          <h3 className="text-sm font-semibold text-[var(--color-foreground)]">
+            Recent Uploads
+          </h3>
+        </div>
+        
+        {recentUploads.length > 0 ? (
+          <div className="space-y-3">
+            {recentUploads.map((contract) => (
+              <div 
+                key={contract.id} 
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--color-secondary)]/50 transition-colors cursor-pointer border border-transparent hover:border-[var(--color-border)]"
+                onClick={() => navigate(`/contracts/${contract.id}`)}
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0 pr-3">
+                  <div className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                    contract.filename.toLowerCase().endsWith('.pdf') ? "bg-red-500/10" : "bg-blue-500/10"
+                  )}>
+                    <FileText className={cn(
+                      "h-4 w-4",
+                      contract.filename.toLowerCase().endsWith('.pdf') ? "text-red-500" : "text-blue-500"
+                    )} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--color-foreground)] truncate">
+                      {contract.filename}
+                    </p>
+                    <p className="text-xs text-[var(--color-muted-foreground)] mt-0.5">
+                      {new Date(contract.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {contract.status === 'analyzed' && (
+                    <span className="text-[10px] px-2 py-1 rounded-full bg-green-500/10 text-green-500 font-medium border border-green-500/20">
+                      Analyzed
+                    </span>
+                  )}
+                  {contract.status === 'processing' && (
+                    <span className="text-[10px] px-2 py-1 rounded-full bg-blue-500/10 text-blue-500 font-medium border border-blue-500/20">
+                      Processing
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-center border border-dashed border-[var(--color-border)] rounded-lg bg-[var(--color-background)]/50">
+            <History className="h-8 w-8 text-[var(--color-muted-foreground)] opacity-30 mb-3" />
+            <p className="text-sm font-medium text-[var(--color-foreground)] mb-1">No recent uploads</p>
+            <p className="text-xs text-[var(--color-muted-foreground)] max-w-xs">
+              Contracts you upload will appear here for quick access.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
