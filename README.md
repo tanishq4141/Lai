@@ -12,6 +12,22 @@ A contract analysis platform that surfaces the critical 10% of a contract requir
 - **Clause Comparison** - Side-by-side comparison of the same clause across multiple contracts for due-diligence scenarios.
 - **Contract Chat** - Ask questions about your contract with citations to specific clauses and sections.
 
+## Screenshots
+
+Screenshots from the E2E verification flow are stored in `tests/screenshots/`.
+
+| Dashboard | Analysis Progress |
+|-----------|-------------------|
+| ![Dashboard overview](tests/screenshots/dashboard-overview.png) | ![Contract analysis extracting clauses](tests/screenshots/analysis-extracting.png) |
+
+| Risk Overview | Extracted Clauses |
+|---------------|-------------------|
+| ![Contract risk overview](tests/screenshots/contract-risk-overview.png) | ![Extracted clauses list](tests/screenshots/extracted-clauses.png) |
+
+| Clause Comparison |
+|-------------------|
+| ![Confidentiality clause comparison](tests/screenshots/compare-confidentiality.png) |
+
 ## Tech Stack
 
 | Layer | Technology |
